@@ -18,11 +18,10 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
+
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
 
         {/* Citizen Redirect */}
@@ -35,7 +34,7 @@ const AppRoutes = () => {
         <Route
           path="/citizen/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="citizen">
               <CitizenDashboard />
             </ProtectedRoute>
           }
@@ -45,17 +44,17 @@ const AppRoutes = () => {
         <Route
           path="/citizen/create"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="citizen">
               <CreateComplaint />
             </ProtectedRoute>
           }
         />
 
-        {/* Admin */}
+        {/* Admin Dashboard */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -71,7 +70,7 @@ const AppRoutes = () => {
         <Route
           path="/worker/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="worker">
               <WorkerDashboard />
             </ProtectedRoute>
           }
@@ -82,6 +81,7 @@ const AppRoutes = () => {
           path="*"
           element={<Navigate to="/" replace />}
         />
+
       </Routes>
     </BrowserRouter>
   );

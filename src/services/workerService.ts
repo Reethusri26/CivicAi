@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://civicai-backend-lz1n.onrender.com/api",
 });
 
 API.interceptors.request.use((config) => {
@@ -19,8 +19,11 @@ export const getAssignedComplaints = (workerId: string) =>
 
 export const updateComplaintStatus = (
   complaintId: string,
-  status: string
-) =>
-  API.patch(`/worker/update-status/${complaintId}`, {
-    status,
+  formData: FormData
+) => {
+  return API.patch(`/worker/update-status/${complaintId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
+};

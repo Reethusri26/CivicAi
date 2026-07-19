@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LandingPage from "./pages/Landing/LandingPage";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CitizenDashboard from "./pages/CitizenDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
+import CitizenDashboard from "./pages/Citizen/CitizenDashboard";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 function App() {
   return (
