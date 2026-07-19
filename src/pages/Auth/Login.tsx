@@ -30,7 +30,10 @@ const Login = () => {
       // Save JWT Token
       localStorage.setItem("token", data.token);
 
-      // Optional: Save logged-in user if returned by backend
+      // Save Role (Required for ProtectedRoute)
+      localStorage.setItem("role", "citizen");
+
+      // Save User
       if (data.user) {
         localStorage.setItem(
           "user",
@@ -40,7 +43,6 @@ const Login = () => {
 
       alert(data.message || "Login Successful");
 
-      // Redirect to Citizen Dashboard
       navigate("/citizen/dashboard");
     } catch (error: any) {
       console.error(error);
@@ -56,9 +58,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
       <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md">
-
         <h1 className="text-3xl font-bold text-center mb-8">
           Citizen Login
         </h1>
@@ -88,9 +88,7 @@ const Login = () => {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-
       </div>
-
     </div>
   );
 };
