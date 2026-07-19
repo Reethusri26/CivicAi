@@ -7,7 +7,7 @@ import Register from "../pages/Auth/Register";
 import ProtectedRoute from "./ProtectedRoute";
 
 import CitizenDashboard from "../pages/Citizen/CitizenDashboard";
-import CreateComplaint from "../pages/Citizen/CreateComplaint";
+import CreateComplaint from "../pages/Citizen/createComplaint";
 
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 
