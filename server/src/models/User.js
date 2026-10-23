@@ -5,7 +5,10 @@ const userSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true, trim: true, maxlength: 80 },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    // Google-only accounts get a random, unusable password hash.
     password: { type: String, required: true, select: false },
+    googleId: { type: String, default: undefined, index: { unique: true, sparse: true } },
+    authProviders: { type: [String], default: ["password"] },
     phone: { type: String, default: "", trim: true },
     role: { type: String, enum: ["citizen"], default: "citizen" },
     profileImage: { type: String, default: "" },

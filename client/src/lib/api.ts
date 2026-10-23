@@ -10,13 +10,39 @@ export const API_ORIGIN = (configured || "http://localhost:5000").replace(/\/+$/
 
 export const TOKEN_KEY = "civicai.token";
 
+// "Keep me signed in" stores the token in localStorage (survives closing the
+// browser, 30-day token). Otherwise it goes in sessionStorage and the user is
+// signed out when the browser closes.
+const safe = <T,>(fn: () => T, fallback: T) => {
+  try {
+    return fn();
+  } catch {
+    return fallback;
+  }
+};
+
+export const getToken = () =>
+  safe(() => localStorage.getItem(TOKEN_KEY), null) || safe(() => sessionStorage.getItem(TOKEN_KEY), null);
+
+export const isRemembered = () => Boolean(safe(() => localStorage.getItem(TOKEN_KEY), null));
+
+export const storeToken = (token: string, remember: boolean) => {
+  clearToken();
+  safe(() => (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, token), undefined);
+};
+
+export const clearToken = () => {
+  safe(() => localStorage.removeItem(TOKEN_KEY), undefined);
+  safe(() => sessionStorage.removeItem(TOKEN_KEY), undefined);
+};
+
 export const api = axios.create({
   baseURL: `${API_ORIGIN}/api`,
   timeout: 45000,
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem(TOKEN_KEY);
+  const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -31,7 +57,7 @@ export const setUnauthorizedHandler = (handler: () => void) => {
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401 && localStorage.getItem(TOKEN_KEY)) {
+    if (error.response?.status === 401 && getToken()) {
       onUnauthorized?.();
     }
     return Promise.reject(error);

@@ -11,6 +11,9 @@ export interface Account {
   phone: string;
   department?: string;
   createdAt?: string;
+  /** False for residents who signed up with Google and haven't set a password. */
+  hasPassword?: boolean;
+  signInMethods?: string[];
 }
 
 export interface EvidenceFile {

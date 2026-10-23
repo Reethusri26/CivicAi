@@ -6,9 +6,9 @@ import Worker from "../models/Worker.js";
 
 export const MODEL_BY_ROLE = { citizen: User, admin: Admin, worker: Worker };
 
-export const signToken = (account, role) =>
+export const signToken = (account, role, remember = false) =>
   jwt.sign({ sub: String(account._id), role, tv: account.tokenVersion || 0 }, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn,
+    expiresIn: remember ? env.jwtRememberExpiresIn : env.jwtExpiresIn,
   });
 
 export const verifyToken = (token) => jwt.verify(token, env.jwtSecret);
@@ -21,5 +21,8 @@ export const publicAccount = (account, role) => ({
   email: account.email,
   phone: account.phone || "",
   department: role === "worker" ? account.department : undefined,
+  // Lets the UI offer "Set a password" to accounts created with Google.
+  hasPassword: role === "citizen" ? (account.authProviders || ["password"]).includes("password") : true,
+  signInMethods: role === "citizen" ? account.authProviders || ["password"] : ["password"],
   createdAt: account.createdAt,
 });

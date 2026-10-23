@@ -15,6 +15,10 @@ const env = {
   mongoUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  // Used when the user ticks "Keep me signed in".
+  jwtRememberExpiresIn: process.env.JWT_REMEMBER_EXPIRES_IN || "30d",
+  // OAuth client ID from Google Cloud Console; Google sign-in is off when empty.
+  googleClientId: process.env.GOOGLE_CLIENT_ID || "",
   corsOrigins: (process.env.CORS_ORIGINS || "http://localhost:5173")
     .split(",")
     .map((origin) => origin.trim())
