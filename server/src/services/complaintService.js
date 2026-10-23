@@ -137,9 +137,19 @@ export const serializeComplaint = (complaint, role) => {
       base.worker.email = worker.email;
       base.worker.phone = worker.phone;
     }
-  } else if (role === "worker") {
-    // Field workers see who reported the issue, not their contact details.
-    base.citizen = citizen ? { name: citizen.fullName } : null;
+  } else {
+    // While work is open, the resident and the assigned worker can see each
+    // other's phone number so they can coordinate on site. Emails stay
+    // private, and phones are hidden again once the work is completed.
+    const workIsOpen = ["Assigned", "In Progress"].includes(c.status);
+
+    if (role === "worker") {
+      base.citizen = citizen
+        ? { name: citizen.fullName, ...(workIsOpen && citizen.phone ? { phone: citizen.phone } : {}) }
+        : null;
+    } else if (worker && workIsOpen && worker.phone) {
+      base.worker.phone = worker.phone;
+    }
   }
 
   return base;

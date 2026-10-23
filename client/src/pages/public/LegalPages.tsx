@@ -31,7 +31,8 @@ export function PrivacyPage() {
       <h2>Who can see it</h2>
       <ul>
         <li>Administrators can see your complaint and contact details.</li>
-        <li>The assigned field worker sees your name, the complaint, photos and location — not your email or phone.</li>
+        <li>The assigned field worker sees your name, the complaint, photos and location, and your phone number only while the work is open. They never see your email.</li>
+        <li>While the work is open you can see the assigned worker's name, department and work phone. Phone numbers on both sides are hidden once the work is completed.</li>
         <li>The public tracking page shows only the reference, category, department, status and dates.</li>
       </ul>
       <h2>Storage and security</h2>

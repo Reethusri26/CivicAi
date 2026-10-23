@@ -50,7 +50,7 @@ const GUIDES: Record<Role, Guide> = {
       { q: "How do I track my complaint?", a: <>Open it from My complaints to see its timeline, notes and photos. Anyone can also check the status with the reference number on the <Link to="/track" className="font-semibold text-brand-700 underline">Track a complaint</Link> page.</> },
       { q: "Can I change or withdraw a complaint?", a: "Yes, while it is still Pending. Open it and use Edit or Withdraw. Once staff start handling it, it's locked so the record stays accurate." },
       { q: "How do I give feedback?", a: "When the work is completed you'll get a notification. Open the complaint, choose 1–5 stars and optionally add a comment. You can rate each complaint once." },
-      { q: "Who can see my details?", a: "Administrators see your contact details. The assigned field worker sees only your name. The public tracking page shows only status and dates." },
+      { q: "Who can see my details?", a: "Administrators see your contact details. While the work is open, the assigned field worker sees your name and phone (never your email), and you can see the worker's name, department and phone. Phones are hidden again once the work is completed. The public tracking page shows only status and dates." },
     ],
   },
   worker: {

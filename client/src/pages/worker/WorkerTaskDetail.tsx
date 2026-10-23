@@ -1,8 +1,8 @@
-import { ArrowLeft, Camera, CheckCircle2, Play, Upload } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle2, Play, Upload, UserRound } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { AiSummary, LocationCard, NotesList } from "../../components/complaint/ComplaintParts";
+import { AiSummary, LocationCard, NotesList, PersonCard } from "../../components/complaint/ComplaintParts";
 import { ComplaintTimeline, StatusStepper } from "../../components/complaint/ComplaintTimeline";
 import { EvidenceGallery } from "../../components/complaint/EvidenceGallery";
 import { ImageUploader } from "../../components/complaint/ImageUploader";
@@ -234,6 +234,29 @@ export default function WorkerTaskDetail() {
         </div>
 
         <div className="space-y-5">
+          {task.citizen && (
+            <Card>
+              <CardHeader title="Reported by" />
+              <div className="p-5">
+                <PersonCard
+                  name={task.citizen.name}
+                  subtitle="Resident"
+                  icon={<UserRound className="size-6" aria-hidden />}
+                  phone={task.citizen.phone}
+                  callLabel="Call the resident"
+                  details={[
+                    { label: "Reported", value: formatDateTime(task.createdAt) },
+                    ...(task.landmark ? [{ label: "Landmark", value: task.landmark }] : []),
+                  ]}
+                  phoneNote={
+                    task.status === "Completed"
+                      ? "Contact details are hidden now that the task is complete."
+                      : "The resident didn't share a phone number. Use the address and photos to find the spot."
+                  }
+                />
+              </div>
+            </Card>
+          )}
           <Card>
             <CardHeader title="Location" />
             <div className="p-5">

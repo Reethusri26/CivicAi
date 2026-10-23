@@ -194,7 +194,7 @@ export function RegisterPage() {
         {error && <InlineAlert tone="error">{error}</InlineAlert>}
         <Input label="Full name" required autoComplete="name" value={form.fullName} onChange={set("fullName")} onBlur={blur("fullName")} error={touched.fullName ? errors.fullName : ""} />
         <Input label="Email" name="email" type="email" required autoComplete="username" value={form.email} onChange={set("email")} onBlur={blur("email")} error={touched.email ? errors.email : ""} />
-        <Input label="Phone (optional)" type="tel" autoComplete="tel" value={form.phone} onChange={set("phone")} hint="Only visible to administrators" />
+        <Input label="Phone (optional)" type="tel" autoComplete="tel" value={form.phone} onChange={set("phone")} hint="Shared with administrators, and with your field worker while your complaint is being worked on" />
         <Input
           label="Password"
           name="password"

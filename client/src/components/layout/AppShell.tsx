@@ -20,6 +20,7 @@ import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { HOME_BY_ROLE } from "../../lib/constants";
 import { cx } from "../../lib/cx";
 import type { Role } from "../../lib/types";
 import { Logo } from "../ui/Logo";
@@ -189,6 +190,14 @@ export function AppShell({ role }: { role: Role }) {
       )}
 
       <main id="main" className={cx("mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8", tabs.length > 0 && "pb-24 lg:pb-8")}>
+        {location.pathname.replace(/\/$/, "") !== HOME_BY_ROLE[role] && (
+          <Link
+            to={HOME_BY_ROLE[role]}
+            className="print:hidden mb-4 inline-flex items-center gap-2 rounded-full bg-role px-4 py-1.5 text-sm font-semibold text-white shadow-role transition hover:-translate-y-0.5"
+          >
+            <LayoutDashboard className="size-4" aria-hidden /> Go to dashboard
+          </Link>
+        )}
         <Outlet />
       </main>
 

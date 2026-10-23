@@ -1,9 +1,69 @@
-import { ExternalLink, MapPin, Navigation } from "lucide-react";
+import { ExternalLink, Lock, MapPin, Navigation, Phone } from "lucide-react";
 import type { ReactNode } from "react";
 import { formatDateTime, formatPercent, mapsLink, mapsSearchLink, osmEmbed } from "../../lib/format";
 import type { AiResult, Complaint, Note } from "../../lib/types";
 import { AiSourceBadge } from "../ui/Badges";
 import { buttonClasses } from "../../lib/cx";
+
+interface PersonCardProps {
+  name: string;
+  subtitle?: ReactNode;
+  icon: ReactNode;
+  phone?: string;
+  details?: { label: string; value: ReactNode }[];
+  /** Shown when no phone is available. */
+  phoneNote?: ReactNode;
+  callLabel: string;
+}
+
+// Contact card for the other party on a complaint (worker for residents,
+// resident for workers). Phones are only sent by the API while work is open.
+export function PersonCard({ name, subtitle, icon, phone, details = [], phoneNote, callLabel }: PersonCardProps) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <span className="grid size-12 place-items-center rounded-2xl bg-role text-white shadow-role">{icon}</span>
+        <div className="min-w-0">
+          <p className="truncate font-display text-base font-bold text-slate-900">{name}</p>
+          {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+        </div>
+      </div>
+
+      {(phone || details.length > 0) && (
+        <dl className="divide-y divide-slate-100 rounded-xl bg-slate-50 px-3 py-1">
+          {phone && (
+            <div className="flex justify-between gap-4 py-2 text-sm">
+              <dt className="text-slate-500">Phone</dt>
+              <dd>
+                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="font-semibold text-[var(--role-ink)] hover:underline">
+                  {phone}
+                </a>
+              </dd>
+            </div>
+          )}
+          {details.map((row) => (
+            <div key={row.label} className="flex justify-between gap-4 py-2 text-sm">
+              <dt className="text-slate-500">{row.label}</dt>
+              <dd className="text-right font-medium text-slate-900">{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {phone ? (
+        <a href={`tel:${phone.replace(/\s+/g, "")}`} className={buttonClasses("primary", "md", "w-full bg-role shadow-role hover:opacity-90")}>
+          <Phone className="size-4" aria-hidden /> {callLabel}
+        </a>
+      ) : (
+        phoneNote && (
+          <p className="flex items-start gap-2 text-xs text-slate-500">
+            <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {phoneNote}
+          </p>
+        )
+      )}
+    </div>
+  );
+}
 
 export function DetailRow({ label, children }: { label: string; children: ReactNode }) {
   return (
