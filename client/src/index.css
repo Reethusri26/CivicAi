@@ -2,9 +2,9 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
   /* Wide, characterful face for big titles and numbers only */
-  --font-hero: "Unbounded", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-hero: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Electric indigo: primary actions, links, focus */
   --color-brand-50: #f0f0ff;

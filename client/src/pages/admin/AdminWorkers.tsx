@@ -77,7 +77,7 @@ function WorkerForm({ mode, departments, onClose, onSaved }: { mode: Exclude<Mod
             <Select label="Department" required value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}>
               {departments.map((d) => <option key={d.id}>{d.name}</option>)}
             </Select>
-            <Input label="Phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} hint="Visible to administrators only" />
+            <Input label="Phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} hint="Shown to the resident while this worker has their complaint open" />
           </>
         )}
         {mode.kind !== "edit" && (

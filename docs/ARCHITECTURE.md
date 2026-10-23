@@ -47,7 +47,7 @@ only while `Pending`; feedback is accepted once, only when `Completed`.
   logout (which increments `tokenVersion`) take effect immediately.
 - Workers are identified only by their token; task queries always filter on `assignedWorker = req.user.id`.
 - Citizens' queries always filter on `citizen = req.user.id`. Missing/foreign records return 404 (no existence leak).
-- Responses are shaped per role by `serializeComplaint`: workers never see citizen email/phone; citizens never see
+- Responses are shaped per role by `serializeComplaint`: workers never see citizen email, and see the citizen phone (and citizens the worker phone) only while the complaint is Assigned or In Progress; citizens never see
   internal notes or worker contact details; nobody receives password hashes.
 - Frontend route guards are UX only.
 

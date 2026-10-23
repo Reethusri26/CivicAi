@@ -96,7 +96,7 @@ const FAQS = [
   },
   {
     q: "Who can see my complaint?",
-    a: "You, the administrators handling it and the field worker assigned to it. Workers see your name but not your contact details. The public Track page shows only the status and dates.",
+    a: "You, the administrators handling it and the field worker assigned to it. While the work is open, the worker sees your name and phone (never your email), and you see theirs; phone numbers are hidden again once the work is done. The public Track page shows only the status and dates.",
   },
   {
     q: "Can I change or withdraw a complaint?",

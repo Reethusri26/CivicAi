@@ -2,7 +2,7 @@ import { ArrowLeft, HardHat, Pencil, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { AiSummary, DetailRow, LocationCard, NotesList } from "../../components/complaint/ComplaintParts";
+import { AiSummary, DetailRow, LocationCard, NotesList, PersonCard } from "../../components/complaint/ComplaintParts";
 import { ComplaintTimeline, StatusStepper } from "../../components/complaint/ComplaintTimeline";
 import { EvidenceGallery } from "../../components/complaint/EvidenceGallery";
 import { PriorityBadge, StatusBadge } from "../../components/ui/Badges";
@@ -209,16 +209,26 @@ export default function CitizenComplaintDetail() {
           </Card>
 
           <Card>
-            <CardHeader title="Assigned to" />
+            <CardHeader title="Your field worker" />
             <div className="p-5">
               {complaint.worker ? (
-                <div className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center rounded-full bg-brand-50 text-brand-700"><HardHat className="size-5" /></span>
-                  <div>
-                    <p className="text-sm font-semibold">{complaint.worker.name}</p>
-                    <p className="text-xs text-slate-500">{complaint.worker.department} department</p>
-                  </div>
-                </div>
+                <PersonCard
+                  name={complaint.worker.name}
+                  subtitle={`${complaint.worker.department} department`}
+                  icon={<HardHat className="size-6" aria-hidden />}
+                  phone={complaint.worker.phone}
+                  callLabel="Call the worker"
+                  details={[
+                    { label: "Assigned", value: formatDateTime(complaint.assignedAt) },
+                    ...(complaint.startedAt ? [{ label: "Work started", value: formatDateTime(complaint.startedAt) }] : []),
+                    ...(complaint.completedAt ? [{ label: "Completed", value: formatDateTime(complaint.completedAt) }] : []),
+                  ]}
+                  phoneNote={
+                    complaint.status === "Completed"
+                      ? "Contact details are hidden now that the work is complete."
+                      : "This worker hasn't added a phone number. Use the notes and timeline for updates."
+                  }
+                />
               ) : (
                 <p className="text-sm text-slate-500">Not assigned yet. You'll be notified when a field worker takes it on.</p>
               )}
