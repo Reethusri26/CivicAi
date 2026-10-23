@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Field";
 import { Logo } from "../../components/ui/Logo";
 import { Hero3D } from "../../components/three/Hero3D";
+import { PHOTOS } from "../../lib/photos";
 import { InlineAlert } from "../../components/ui/States";
 import { errorMessage } from "../../lib/api";
 import { HOME_BY_ROLE } from "../../lib/constants";
@@ -28,6 +29,8 @@ function AuthFrame({ title, subtitle, children }: { title: string; subtitle: str
         </div>
       </div>
       <div className="relative hidden overflow-hidden bg-night-950 lg:flex lg:flex-col">
+        <img src={PHOTOS.cityNight.src} alt="" className="absolute inset-0 size-full object-cover opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/70 to-night-950/40" aria-hidden />
         <div className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" aria-hidden />
         <div className="pointer-events-none absolute -right-20 -top-20 size-[28rem] rounded-full bg-brand-600/40 blur-[120px]" aria-hidden />
         <div className="pointer-events-none absolute -bottom-20 -left-10 size-[24rem] rounded-full bg-mint-500/25 blur-[120px]" aria-hidden />

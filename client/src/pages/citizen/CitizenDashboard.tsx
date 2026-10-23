@@ -2,7 +2,8 @@ import { CheckCircle2, ClipboardList, Clock, Hammer, Plus, Search, UserCheck } f
 import { useState } from "react";
 import { ComplaintCard } from "../../components/complaint/ComplaintCard";
 import { LinkButton } from "../../components/ui/Button";
-import { PageHeader } from "../../components/ui/Card";
+import { PortalBanner } from "../../components/layout/PortalBanner";
+import { PHOTOS } from "../../lib/photos";
 import { Pagination } from "../../components/ui/Pagination";
 import { StatCard } from "../../components/ui/StatCard";
 import { EmptyState, ErrorState, ListSkeleton } from "../../components/ui/States";
@@ -52,11 +53,20 @@ export default function CitizenDashboard() {
 
   return (
     <>
-      <PageHeader
+      <PortalBanner
+        photo={PHOTOS.streetLights}
         eyebrow={`${greeting()}, ${firstName(user?.name)}`}
         title="My complaints"
         description="Track everything you've reported and see what's happening with each one."
-        actions={<LinkButton to="/citizen/new" icon={<Plus className="size-4" />}>Report an issue</LinkButton>}
+        actions={
+          <LinkButton
+            to="/citizen/new"
+            icon={<Plus className="size-4" />}
+            className="bg-mint-400 text-night-950 hover:bg-mint-300"
+          >
+            Report an issue
+          </LinkButton>
+        }
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { HOME_BY_ROLE } from "../../lib/constants";
+import { PHOTOS } from "../../lib/photos";
 import { buttonClasses, cx } from "../../lib/cx";
 import { Logo } from "../ui/Logo";
 
@@ -115,6 +116,19 @@ export function PublicFooter() {
           </ul>
         </div>
       </div>
+      <details className="mx-auto max-w-7xl px-4 pb-4 text-xs text-slate-500 sm:px-6 lg:px-8">
+        <summary className="cursor-pointer select-none hover:text-slate-700">Photo credits</summary>
+        <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+          {Object.values(PHOTOS).map((photo) => (
+            <li key={photo.src}>
+              <a href={photo.source} target="_blank" rel="noreferrer" className="underline hover:text-brand-700">
+                {photo.alt.split(",")[0]}
+              </a>{" "}
+              — {photo.credit}, {photo.license}, via Wikimedia Commons
+            </li>
+          ))}
+        </ul>
+      </details>
       <div className="border-t border-slate-100 py-5 text-center text-xs text-slate-500">
         © {new Date().getFullYear()} CivicAI. A pilot civic-technology project.
       </div>

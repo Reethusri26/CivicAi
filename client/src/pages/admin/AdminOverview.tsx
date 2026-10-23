@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 import "../../lib/charts";
 import { PriorityBadge, StatusBadge } from "../../components/ui/Badges";
 import { LinkButton } from "../../components/ui/Button";
-import { Card, CardHeader, PageHeader } from "../../components/ui/Card";
+import { Card, CardHeader } from "../../components/ui/Card";
+import { PortalBanner } from "../../components/layout/PortalBanner";
+import { PHOTOS } from "../../lib/photos";
 import { StatCard } from "../../components/ui/StatCard";
 import { EmptyState, ErrorState, LoadingState } from "../../components/ui/States";
 import { api } from "../../lib/api";
@@ -49,10 +51,12 @@ export default function AdminOverview() {
 
   return (
     <>
-      <PageHeader
+      <PortalBanner
+        photo={PHOTOS.cityNight}
+        eyebrow="Operations center"
         title="Overview"
         description="Live operational picture across all departments."
-        actions={<LinkButton to="/admin/complaints" variant="secondary">Open complaint queue</LinkButton>}
+        actions={<LinkButton to="/admin/complaints" variant="inverse">Open complaint queue</LinkButton>}
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">

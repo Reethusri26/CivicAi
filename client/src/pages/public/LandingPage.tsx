@@ -22,7 +22,8 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { PublicFooter, PublicNav } from "../../components/layout/PublicLayout";
-import { Hero3D } from "../../components/three/Hero3D";
+import { Hero3D, Scene3D } from "../../components/three/Hero3D";
+import { PHOTOS } from "../../lib/photos";
 import { TiltCard } from "../../components/three/TiltCard";
 import { api } from "../../lib/api";
 import { buttonClasses, cx } from "../../lib/cx";
@@ -71,6 +72,14 @@ const AUDIENCES = [
 ];
 
 const CATEGORIES = ["Potholes", "Garbage", "Water leaks", "Street lights", "Drainage", "Dead animals"];
+
+const ISSUE_PHOTOS = [
+  { label: "Potholes", department: "Roads", photo: PHOTOS.pothole, tag: "bg-amber-400 text-night-950" },
+  { label: "Garbage", department: "Sanitation", photo: PHOTOS.garbage, tag: "bg-mint-400 text-night-950" },
+  { label: "Water leaks", department: "Water", photo: PHOTOS.waterLeak, tag: "bg-sky-400 text-night-950" },
+  { label: "Street lights", department: "Electricity", photo: PHOTOS.streetLights, tag: "bg-yellow-300 text-night-950" },
+  { label: "Waterlogging", department: "Drainage", photo: PHOTOS.waterlogging, tag: "bg-brand-400 text-white" },
+];
 
 const FAQS = [
   {
@@ -287,6 +296,60 @@ export default function LandingPage() {
         </ol>
       </section>
 
+      {/* Real issues gallery */}
+      <section className="bg-slate-50 py-24" aria-labelledby="issues-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div {...reveal} className="flex flex-wrap items-end justify-between gap-4">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-600">What you can report</p>
+              <h2 id="issues-heading" className="mt-3 text-4xl font-bold sm:text-5xl">Real problems on real streets</h2>
+              <p className="mt-4 text-lg text-slate-600">If it's broken, blocked, leaking or dark, report it in a couple of minutes.</p>
+            </div>
+            <Link to={reportHref} className={buttonClasses("primary", "lg", "rounded-xl")}>
+              Report one now <ArrowRight className="size-4" />
+            </Link>
+          </motion.div>
+          <ul className="mt-12 grid auto-rows-[15rem] gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {ISSUE_PHOTOS.map((item, index) => (
+              <motion.li key={item.label} {...reveal} transition={{ duration: 0.5, delay: index * 0.07 }} className={index === 0 ? "lg:col-span-2 lg:row-span-2" : ""}>
+                <TiltCard depth={8}>
+                  <figure className="group relative h-full overflow-hidden rounded-3xl bg-night-900 shadow-raised">
+                    <img
+                      src={item.photo.src}
+                      alt={item.photo.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover transition duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-night-950 via-night-950/30 to-transparent" aria-hidden />
+                    <figcaption className="absolute inset-x-0 bottom-0 p-5" style={{ transform: "translateZ(40px)" }}>
+                      <span className={cx("inline-block rounded-full px-2.5 py-0.5 text-xs font-bold", item.tag)}>{item.department}</span>
+                      <p className="mt-2 font-display text-2xl font-bold text-white">{item.label}</p>
+                    </figcaption>
+                  </figure>
+                </TiltCard>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 3D street */}
+      <section className="relative overflow-hidden bg-night-950" aria-labelledby="street-heading">
+        <img src={PHOTOS.cityNight.src} alt="" loading="lazy" className="absolute inset-0 size-full object-cover opacity-25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-night-950 via-night-950/70 to-night-950" aria-hidden />
+        <div className="relative mx-auto max-w-7xl px-4 pt-20 text-center sm:px-6 lg:px-8">
+          <motion.p {...reveal} className="text-sm font-semibold uppercase tracking-[0.2em] text-mint-300">On the ground</motion.p>
+          <motion.h2 {...reveal} id="street-heading" className="mx-auto mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
+            Every street, <span className="text-gradient">tracked until it's fixed</span>
+          </motion.h2>
+          <motion.p {...reveal} className="mx-auto mt-4 max-w-2xl text-lg text-slate-300">
+            Reports become tasks, tasks become crews on site, and the pin turns green only when there's a photo of the finished work.
+          </motion.p>
+        </div>
+        <Scene3D scene="road" className="relative mx-auto h-72 max-w-6xl sm:h-96" />
+      </section>
+
       <PublicStats />
 
       {/* Audiences */}
@@ -366,6 +429,7 @@ export default function LandingPage() {
           {...reveal}
           className="relative grid items-center gap-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 via-brand-700 to-fuchsia-700 p-8 text-white shadow-2xl sm:p-12 lg:grid-cols-2"
         >
+          <img src={PHOTOS.roadCrew.src} alt="" loading="lazy" className="absolute inset-0 size-full object-cover opacity-20 mix-blend-luminosity" />
           <div className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-mint-400/30 blur-3xl" aria-hidden />
           <div className="relative min-w-0">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-mint-300">Worker workflow</p>
