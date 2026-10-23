@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { MapPinned, Search } from "lucide-react";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -6,7 +6,7 @@ import { StatusStepper } from "../../components/complaint/ComplaintTimeline";
 import { StatusBadge } from "../../components/ui/Badges";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
-import { Input } from "../../components/ui/Field";
+import { PublicFooter, PublicNav } from "../../components/layout/PublicLayout";
 import { InlineAlert } from "../../components/ui/States";
 import { api, errorMessage } from "../../lib/api";
 import { formatDate, formatDateTime } from "../../lib/format";
@@ -58,28 +58,58 @@ export default function TrackPage() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
-      <h1 className="text-3xl font-bold">Track a complaint</h1>
-      <p className="mt-2 text-slate-600">
-        Enter the reference number you received when the complaint was submitted. Only the status and dates are shown here —
-        sign in to see full details.
-      </p>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <div className="relative overflow-hidden bg-night-950">
+        <div className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" aria-hidden />
+        <div className="pointer-events-none absolute -left-32 -top-32 size-[30rem] rounded-full bg-brand-600/40 blur-[120px]" aria-hidden />
+        <div className="pointer-events-none absolute -right-24 top-10 size-[24rem] rounded-full bg-mint-500/20 blur-[120px]" aria-hidden />
+        <PublicNav dark />
+        <section className="relative mx-auto max-w-3xl px-4 pb-24 pt-14 text-center sm:px-6">
+          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-fuchsia-500 text-white shadow-lg glow-brand">
+            <MapPinned className="size-7" aria-hidden />
+          </span>
+          <h1 className="mt-6 text-5xl font-bold text-white sm:text-6xl">
+            Track a <span className="text-gradient">complaint</span>
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
+            Enter the reference number you received when the complaint was submitted. Only the status and dates are shown here —
+            sign in to see full details.
+          </p>
+          <form
+            onSubmit={submit}
+            className="mx-auto mt-10 flex max-w-xl flex-col gap-2 rounded-2xl border border-white/15 bg-white/10 p-2 backdrop-blur-md sm:flex-row"
+          >
+            <label htmlFor="track-ref" className="sr-only">Reference number</label>
+            <input
+              id="track-ref"
+              placeholder="CIV-260101-ABC123"
+              value={reference}
+              onChange={(event) => setReference(event.target.value)}
+              className="h-12 flex-1 rounded-xl border-0 bg-white px-4 font-mono text-base uppercase text-slate-900 placeholder:normal-case placeholder:text-slate-400 focus:ring-2 focus:ring-mint-400 focus:outline-none"
+              autoCapitalize="characters"
+              spellCheck={false}
+            />
+            <Button
+              type="submit"
+              size="lg"
+              loading={loading}
+              icon={<Search className="size-5" />}
+              disabled={!reference.trim()}
+              className="rounded-xl bg-mint-400 font-bold text-night-950 hover:bg-mint-300"
+            >
+              Track
+            </Button>
+          </form>
+        </section>
+      </div>
 
-      <form onSubmit={submit} className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end">
-        <Input
-          label="Reference number"
-          placeholder="CIV-260101-ABC123"
-          value={reference}
-          onChange={(event) => setReference(event.target.value)}
-          wrapperClassName="flex-1"
-          className="font-mono uppercase"
-          autoCapitalize="characters"
-          spellCheck={false}
-        />
-        <Button type="submit" size="lg" loading={loading} icon={<Search className="size-4" />} disabled={!reference.trim()}>
-          Track
-        </Button>
-      </form>
+      <main id="main" className="relative mx-auto -mt-12 w-full max-w-2xl flex-1 px-4 pb-16 sm:px-6">
+      {!result && !error && (
+        <Card className="p-6 text-center text-sm text-slate-500 shadow-raised">
+          Your reference looks like <span className="font-mono font-semibold text-slate-700">CIV-YYMMDD-XXXXXX</span> and is shown
+          after you submit a complaint.
+        </Card>
+      )}
 
       {error && (
         <div className="mt-6">
@@ -88,7 +118,7 @@ export default function TrackPage() {
       )}
 
       {result && (
-        <Card className="mt-8 p-5 sm:p-6">
+        <Card className="p-5 shadow-raised sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="font-mono text-sm text-slate-500">{result.reference}</p>
@@ -115,6 +145,8 @@ export default function TrackPage() {
           </p>
         </Card>
       )}
+      </main>
+      <PublicFooter />
     </div>
   );
 }

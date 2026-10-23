@@ -22,7 +22,7 @@ ChartJS.defaults.maintainAspectRatio = false;
 export const GRID_COLOR = "#e2e8f0";
 
 // Categorical palette for series without an inherent colour (categories, departments).
-export const SERIES_COLORS = ["#2647e0", "#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#e11d48", "#64748b", "#14b8a6"];
+export const SERIES_COLORS = ["#5536f5", "#0ea5e9", "#10b981", "#f59e0b", "#8b5cf6", "#e11d48", "#64748b", "#14b8a6"];
 
 export const integerAxis = {
   beginAtZero: true,

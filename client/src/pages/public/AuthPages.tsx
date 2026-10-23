@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Field";
 import { Logo } from "../../components/ui/Logo";
+import { Hero3D } from "../../components/three/Hero3D";
 import { InlineAlert } from "../../components/ui/States";
 import { errorMessage } from "../../lib/api";
 import { HOME_BY_ROLE } from "../../lib/constants";
@@ -14,31 +15,28 @@ import type { Role } from "../../lib/types";
 
 function AuthFrame({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="flex flex-col px-4 py-8 sm:px-10">
+    <div className="grid min-h-screen bg-white lg:grid-cols-[1fr_1.1fr]">
+      <div className="relative flex flex-col px-4 py-8 sm:px-10">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-600 via-fuchsia-500 to-mint-400" aria-hidden />
         <Link to="/" aria-label="CivicAI home">
           <Logo />
         </Link>
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10">
-          <h1 className="text-2xl font-bold">{title}</h1>
-          <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
+          <h1 className="text-4xl font-bold">{title}</h1>
+          <p className="mt-2 text-slate-600">{subtitle}</p>
           <div className="mt-8">{children}</div>
         </div>
       </div>
-      <div className="relative hidden overflow-hidden bg-night-900 lg:block">
-        <div
-          className="absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
-          }}
-          aria-hidden
-        />
-        <div className="relative flex h-full flex-col justify-end p-12">
-          <p className="font-display text-4xl font-extrabold leading-tight text-white">
+      <div className="relative hidden overflow-hidden bg-night-950 lg:flex lg:flex-col">
+        <div className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" aria-hidden />
+        <div className="pointer-events-none absolute -right-20 -top-20 size-[28rem] rounded-full bg-brand-600/40 blur-[120px]" aria-hidden />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 size-[24rem] rounded-full bg-mint-500/25 blur-[120px]" aria-hidden />
+        <Hero3D className="relative mx-auto mt-6 aspect-square w-full max-w-[34rem] flex-1" />
+        <div className="relative px-12 pb-12">
+          <p className="font-display text-5xl font-bold leading-[1] text-white">
             Report. Track.
             <br />
-            <span className="text-brand-300">Resolve.</span>
+            <span className="text-gradient">Resolve.</span>
           </p>
           <p className="mt-4 max-w-md text-slate-300">
             Every complaint gets a reference number and a visible timeline, from the moment it's submitted to the photo of the
