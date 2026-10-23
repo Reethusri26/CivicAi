@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { cx } from "../../lib/cx";
 
 const CityScene = lazy(() => import("./CityScene"));
+const RoadScene = lazy(() => import("./RoadScene"));
 
 const supportsWebGL = () => {
   try {
@@ -14,7 +15,7 @@ const supportsWebGL = () => {
 
 const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-// Still isometric illustration used while the 3D scene loads, and instead of
+// Still isometric illustration used while the city scene loads, and instead of
 // it when WebGL is unavailable or the visitor prefers reduced motion.
 function StaticCity() {
   return (
@@ -48,12 +49,36 @@ function StaticCity() {
   );
 }
 
-export function Hero3D({ className }: { className?: string }) {
+function StaticRoad() {
+  return (
+    <svg viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" className="size-full" aria-hidden>
+      <polygon points="0,120 400,90 400,140 0,160" fill="#14122e" />
+      {[30, 110, 190, 270, 350].map((x) => (
+        <rect key={x} x={x} y={122 - x * 0.075} width="40" height="3" fill="#e2e8f0" opacity="0.8" />
+      ))}
+      {[60, 220, 330].map((x) => (
+        <g key={x}>
+          <rect x={x} y={60} width="3" height={60 - x * 0.05} fill="#64748b" />
+          <circle cx={x + 1} cy={60} r="5" fill="#fde68a" />
+        </g>
+      ))}
+      <circle cx="160" cy="70" r="10" fill="#3ee8bb" />
+      <polygon points="150,118 170,118 160,100" fill="#f97316" />
+    </svg>
+  );
+}
+
+interface Scene3DProps {
+  scene?: "city" | "road";
+  className?: string;
+}
+
+export function Scene3D({ scene = "city", className }: Scene3DProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const [enabled] = useState(() => typeof window !== "undefined" && supportsWebGL() && !prefersReducedMotion());
   const [visible, setVisible] = useState(true);
 
-  // Stop rendering frames when the hero is scrolled out of view.
+  // Stop rendering frames when the scene is scrolled out of view.
   useEffect(() => {
     if (!enabled || !wrapper.current) return;
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.05 });
@@ -61,15 +86,22 @@ export function Hero3D({ className }: { className?: string }) {
     return () => observer.disconnect();
   }, [enabled]);
 
+  const Fallback = scene === "city" ? StaticCity : StaticRoad;
+  const Live = scene === "city" ? CityScene : RoadScene;
+
   return (
     <div ref={wrapper} className={cx("relative", className)}>
       {enabled ? (
-        <Suspense fallback={<StaticCity />}>
-          <CityScene active={visible} />
+        <Suspense fallback={<Fallback />}>
+          <Live active={visible} />
         </Suspense>
       ) : (
-        <StaticCity />
+        <Fallback />
       )}
     </div>
   );
+}
+
+export function Hero3D({ className }: { className?: string }) {
+  return <Scene3D scene="city" className={className} />;
 }

@@ -2,6 +2,8 @@ import { AlertTriangle, CalendarClock, CheckCircle2, ChevronRight, Hammer, ListT
 import { Link } from "react-router-dom";
 import { PriorityBadge, StatusBadge } from "../../components/ui/Badges";
 import { PageHeader } from "../../components/ui/Card";
+import { PortalBanner } from "../../components/layout/PortalBanner";
+import { PHOTOS } from "../../lib/photos";
 import { StatCard } from "../../components/ui/StatCard";
 import { EmptyState, ErrorState, ListSkeleton } from "../../components/ui/States";
 import { useAuth } from "../../context/AuthContext";
@@ -65,11 +67,16 @@ export default function WorkerTasks({ history = false }: { history?: boolean }) 
 
   return (
     <>
-      <PageHeader
-        eyebrow={history ? undefined : `Hello, ${firstName(user?.name)}`}
-        title={history ? "Completed tasks" : "My tasks"}
-        description={history ? "Work you've finished, newest first." : `${user?.department} department · ordered by status and priority`}
-      />
+      {history ? (
+        <PageHeader title="Completed tasks" description="Work you've finished, newest first." />
+      ) : (
+        <PortalBanner
+          photo={PHOTOS.roadCrew}
+          eyebrow={`Hello, ${firstName(user?.name)}`}
+          title="My tasks"
+          description={`${user?.department} department · ordered by status and priority`}
+        />
+      )}
 
       {!history && (
         <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
