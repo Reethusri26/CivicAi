@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Civic blue: primary actions, links, focus */
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #dbe6ff;
+  --color-brand-200: #bfd2ff;
+  --color-brand-300: #93b3fd;
+  --color-brand-400: #6089fa;
+  --color-brand-500: #3b64f3;
+  --color-brand-600: #2647e0;
+  --color-brand-700: #1f38c2;
+  --color-brand-800: #1f319c;
+  --color-brand-900: #1e2f7b;
+  --color-brand-950: #121a45;
+
+  /* Deep navy used for the public hero and admin sidebar */
+  --color-night-800: #111a33;
+  --color-night-900: #0b1226;
+  --color-night-950: #070c1a;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-raised: 0 4px 12px -2px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.05);
+
+  --animate-fade-in: fade-in 180ms ease-out;
+  --animate-slide-in: slide-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-in {
+    from { transform: translateX(16px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-slate-50 font-sans text-slate-800 antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-slate-900;
+    letter-spacing: -0.015em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}

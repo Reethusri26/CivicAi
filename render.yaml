@@ -1,0 +1,31 @@
+# Render Blueprint for the CivicAI API. Secrets are marked sync: false and
+# must be entered in the Render dashboard; they are never stored here.
+services:
+  - type: web
+    name: civicai-backend
+    runtime: node
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FILE_URL_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://civic-ai-jet.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
