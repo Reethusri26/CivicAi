@@ -6,6 +6,7 @@ import {
   FileText,
   HardHat,
   LayoutDashboard,
+  LifeBuoy,
   ListTodo,
   LogOut,
   Menu,
@@ -38,12 +39,14 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/citizen/new", label: "Report an issue", icon: PlusCircle, mobileTab: true },
     { to: "/citizen/notifications", label: "Notifications", icon: Bell, mobileTab: true },
     { to: "/citizen/profile", label: "Profile", icon: UserRound, mobileTab: true },
+    { to: "/citizen/help", label: "Help", icon: LifeBuoy },
   ],
   worker: [
     { to: "/worker", label: "My tasks", icon: ListTodo, end: true, mobileTab: true },
     { to: "/worker/history", label: "Completed", icon: ClipboardList, mobileTab: true },
     { to: "/worker/notifications", label: "Notifications", icon: Bell, mobileTab: true },
     { to: "/worker/profile", label: "Profile", icon: UserRound, mobileTab: true },
+    { to: "/worker/help", label: "Help", icon: LifeBuoy },
   ],
   admin: [
     { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
@@ -54,6 +57,7 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/admin/reports", label: "Reports", icon: FileText },
     { to: "/admin/notifications", label: "Notifications", icon: Bell },
     { to: "/admin/settings", label: "Settings", icon: Settings },
+    { to: "/admin/help", label: "Help", icon: LifeBuoy },
   ],
 };
 
@@ -75,7 +79,7 @@ function SidebarNav({ role, onNavigate }: { role: Role; onNavigate?: () => void 
           className={({ isActive }) =>
             cx(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
-              isActive ? "bg-brand-600 text-white shadow-[0_6px_20px_-6px_rgb(101_82_255/0.8)]" : "text-slate-300 hover:bg-white/5 hover:text-white"
+              isActive ? "bg-role text-white shadow-role" : "text-slate-300 hover:bg-white/5 hover:text-white"
             )
           }
         >
@@ -105,9 +109,9 @@ export function AppShell({ role }: { role: Role }) {
   const tabs = NAV[role].filter((item) => item.mobileTab);
 
   const accountBlock = (
-    <div className="border-t border-white/10 pt-4">
+    <div className="relative border-t border-white/10 pt-4">
       <div className="flex items-center gap-3 px-1">
-        <span className="grid size-9 place-items-center rounded-full bg-brand-600 font-semibold text-white">
+        <span className="grid size-9 place-items-center rounded-full bg-role font-hero text-sm font-bold text-white">
           {(user?.name || "?").charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
@@ -125,25 +129,27 @@ export function AppShell({ role }: { role: Role }) {
   );
 
   return (
-    <div className="min-h-screen lg:pl-64 print:pl-0">
+    <div data-role={role} className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,var(--role-soft),transparent_55%)] lg:pl-64 print:pl-0">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">
         Skip to content
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-night-900 px-4 py-5 lg:flex print:hidden">
-        <Link to={NAV[role][0].to} className="px-2">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-hidden bg-night-950 px-4 py-5 lg:flex print:hidden">
+        <div className="pointer-events-none absolute -left-20 -top-20 size-60 rounded-full bg-role opacity-30 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40 [mask-image:linear-gradient(to_bottom,black,transparent_60%)]" aria-hidden />
+        <Link to={NAV[role][0].to} className="relative px-2">
           <Logo inverse />
         </Link>
-        <p className="mt-1 px-2 text-xs font-medium uppercase tracking-wider text-slate-500">{ROLE_LABEL[role]}</p>
-        <div className="mt-6 flex-1 overflow-y-auto">
+        <p className="relative mt-2 px-2"><span className="text-role text-xs font-bold uppercase tracking-[0.18em]">{ROLE_LABEL[role]}</span></p>
+        <div className="relative mt-6 flex-1 overflow-y-auto">
           <SidebarNav role={role} />
         </div>
         {accountBlock}
       </aside>
 
       {/* Top bar */}
-      <header className="print:hidden sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:h-16 lg:px-8">
+      <header className="print:hidden sticky top-0 z-20 flex h-14 border-t-[3px] border-t-[var(--role-a)] items-center justify-between gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:h-16 lg:px-8">
         <div className="flex items-center gap-2 lg:hidden">
           <button onClick={() => setMenuOpen(true)} className="grid size-10 place-items-center rounded-lg text-slate-600 hover:bg-slate-100" aria-label="Open menu">
             <Menu className="size-5" />
@@ -174,7 +180,7 @@ export function AppShell({ role }: { role: Role }) {
                 <X className="size-5" />
               </button>
             </div>
-            <div className="mt-6 flex-1 overflow-y-auto">
+            <div className="relative mt-6 flex-1 overflow-y-auto">
               <SidebarNav role={role} onNavigate={() => setMenuOpen(false)} />
             </div>
             {accountBlock}
@@ -195,7 +201,7 @@ export function AppShell({ role }: { role: Role }) {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                cx("flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium", isActive ? "text-brand-700" : "text-slate-500")
+                cx("flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold", isActive ? "text-[var(--role-ink)]" : "text-slate-500")
               }
             >
               <item.icon className="size-5" aria-hidden />

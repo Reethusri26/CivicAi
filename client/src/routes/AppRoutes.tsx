@@ -24,6 +24,7 @@ const AdminDepartments = lazy(() => import("../pages/admin/AdminDepartments"));
 const AdminAnalytics = lazy(() => import("../pages/admin/AdminAnalytics"));
 const AdminReports = lazy(() => import("../pages/admin/AdminReports"));
 const NotificationsPage = lazy(() => import("../pages/shared/AccountPages").then((m) => ({ default: m.NotificationsPage })));
+const HelpPage = lazy(() => import("../pages/shared/HelpPage"));
 const ProfilePage = lazy(() => import("../pages/shared/AccountPages").then((m) => ({ default: m.ProfilePage })));
 
 const Fallback = <LoadingState className="min-h-[50vh]" />;
@@ -41,6 +42,7 @@ export default function AppRoutes() {
               <Route path="/track" element={<TrackPage />} />
               <Route element={<PublicLayout />}>
 
+                <Route path="/help" element={<HelpPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
@@ -58,6 +60,7 @@ export default function AppRoutes() {
                 <Route path="complaints/:id" element={<CitizenComplaintDetail />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route path="help" element={<HelpPage role="citizen" />} />
               </Route>
 
               <Route path="/worker" element={<ProtectedRoute role="worker"><AppShell role="worker" /></ProtectedRoute>}>
@@ -66,6 +69,7 @@ export default function AppRoutes() {
                 <Route path="tasks/:id" element={<WorkerTaskDetail />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route path="help" element={<HelpPage role="worker" />} />
               </Route>
 
               <Route path="/admin" element={<ProtectedRoute role="admin"><AppShell role="admin" /></ProtectedRoute>}>
@@ -78,6 +82,7 @@ export default function AppRoutes() {
                 <Route path="reports" element={<AdminReports />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings" element={<ProfilePage />} />
+                <Route path="help" element={<HelpPage role="admin" />} />
               </Route>
             </Routes>
           </Suspense>

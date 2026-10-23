@@ -11,7 +11,7 @@ const LINKS = [
   { to: "/#how-it-works", label: "How it works" },
   { to: "/#features", label: "Features" },
   { to: "/track", label: "Track a complaint" },
-  { to: "/#faq", label: "FAQ" },
+  { to: "/help", label: "Help" },
 ];
 
 export function PublicNav({ dark = false }: { dark?: boolean }) {
@@ -112,6 +112,7 @@ export function PublicFooter() {
           <ul className="mt-3 space-y-2 text-sm text-slate-600">
             <li><Link to="/privacy" className="hover:text-brand-700">Privacy</Link></li>
             <li><Link to="/terms" className="hover:text-brand-700">Terms of use</Link></li>
+            <li><Link to="/help" className="hover:text-brand-700">Help centre</Link></li>
             <li><Link to="/#contact" className="hover:text-brand-700">Contact & support</Link></li>
           </ul>
         </div>

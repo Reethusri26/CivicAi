@@ -115,9 +115,10 @@ function LoginForm({ initialRole }: { initialRole: Role }) {
 
       <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
         {error && <InlineAlert tone="error">{error}</InlineAlert>}
-        <Input label="Email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input label="Email" name="email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input
           label="Password"
+          name="password"
           type="password"
           autoComplete="current-password"
           required
@@ -192,10 +193,11 @@ export function RegisterPage() {
       <form onSubmit={submit} className="space-y-4" noValidate>
         {error && <InlineAlert tone="error">{error}</InlineAlert>}
         <Input label="Full name" required autoComplete="name" value={form.fullName} onChange={set("fullName")} onBlur={blur("fullName")} error={touched.fullName ? errors.fullName : ""} />
-        <Input label="Email" type="email" required autoComplete="email" value={form.email} onChange={set("email")} onBlur={blur("email")} error={touched.email ? errors.email : ""} />
+        <Input label="Email" name="email" type="email" required autoComplete="username" value={form.email} onChange={set("email")} onBlur={blur("email")} error={touched.email ? errors.email : ""} />
         <Input label="Phone (optional)" type="tel" autoComplete="tel" value={form.phone} onChange={set("phone")} hint="Only visible to administrators" />
         <Input
           label="Password"
+          name="password"
           type="password"
           required
           autoComplete="new-password"
