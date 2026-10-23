@@ -1,36 +1,45 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { TOKEN_KEY, api, setUnauthorizedHandler } from "../lib/api";
+import { api, clearToken, getToken, isRemembered, setUnauthorizedHandler, storeToken } from "../lib/api";
 import type { Account, Role } from "../lib/types";
+
+interface RegisterData {
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string;
+}
 
 interface AuthValue {
   user: Account | null;
   // True until the stored session has been verified with the server.
   checking: boolean;
-  signIn: (email: string, password: string, role: Role) => Promise<Account>;
-  register: (data: { fullName: string; email: string; password: string; phone: string }) => Promise<Account>;
+  signIn: (email: string, password: string, role: Role, remember: boolean) => Promise<Account>;
+  signInWithGoogle: (credential: string, remember: boolean) => Promise<Account>;
+  register: (data: RegisterData, remember: boolean) => Promise<Account>;
   signOut: () => Promise<void>;
   updateUser: (user: Account) => void;
-  setSession: (token: string, user: Account) => void;
+  /** Replaces the token, keeping the current "Keep me signed in" choice unless one is given. */
+  setSession: (token: string, user: Account, remember?: boolean) => void;
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
 
-// The token is kept in localStorage and sent as a bearer header. The API and
-// frontend are on different domains (Render / Vercel), which rules out simple
-// SameSite cookies; tokens are short-lived (1 day) and revocable server-side.
+// The token is sent as a bearer header. The API and frontend are on different
+// domains (Render / Vercel), which rules out simple SameSite cookies. Tokens
+// are revocable server-side: 1 day normally, 30 days with "Keep me signed in".
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Account | null>(null);
-  const [checking, setChecking] = useState(() => Boolean(localStorage.getItem(TOKEN_KEY)));
+  const [checking, setChecking] = useState(() => Boolean(getToken()));
 
   const clear = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
+    clearToken();
     setUser(null);
   }, []);
 
   useEffect(() => {
     setUnauthorizedHandler(clear);
-    if (!localStorage.getItem(TOKEN_KEY)) return;
+    if (!getToken()) return;
 
     api
       .get("/auth/me")
@@ -39,24 +48,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setChecking(false));
   }, [clear]);
 
-  const setSession = useCallback((token: string, account: Account) => {
-    localStorage.setItem(TOKEN_KEY, token);
+  const setSession = useCallback((token: string, account: Account, remember?: boolean) => {
+    storeToken(token, remember ?? isRemembered());
     setUser(account);
   }, []);
 
   const signIn = useCallback(
-    async (email: string, password: string, role: Role) => {
-      const res = await api.post("/auth/login", { email, password, role });
-      setSession(res.data.token, res.data.user);
+    async (email: string, password: string, role: Role, remember: boolean) => {
+      const res = await api.post("/auth/login", { email, password, role, remember });
+      setSession(res.data.token, res.data.user, remember);
+      return res.data.user as Account;
+    },
+    [setSession]
+  );
+
+  const signInWithGoogle = useCallback(
+    async (credential: string, remember: boolean) => {
+      const res = await api.post("/auth/google", { credential, remember });
+      setSession(res.data.token, res.data.user, remember);
       return res.data.user as Account;
     },
     [setSession]
   );
 
   const register = useCallback(
-    async (data: { fullName: string; email: string; password: string; phone: string }) => {
-      const res = await api.post("/auth/register", data);
-      setSession(res.data.token, res.data.user);
+    async (data: RegisterData, remember: boolean) => {
+      const res = await api.post("/auth/register", { ...data, remember });
+      setSession(res.data.token, res.data.user, remember);
       return res.data.user as Account;
     },
     [setSession]
@@ -72,8 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clear]);
 
   const value = useMemo(
-    () => ({ user, checking, signIn, register, signOut, updateUser: setUser, setSession }),
-    [user, checking, signIn, register, signOut, setSession]
+    () => ({ user, checking, signIn, signInWithGoogle, register, signOut, updateUser: setUser, setSession }),
+    [user, checking, signIn, signInWithGoogle, register, signOut, setSession]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

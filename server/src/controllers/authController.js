@@ -1,5 +1,7 @@
+import crypto from "crypto";
 import bcrypt from "bcrypt";
 import env from "../config/env.js";
+import { verifyGoogleToken } from "../services/googleAuth.js";
 import User from "../models/User.js";
 import AppError, { badRequest } from "../utils/AppError.js";
 import { MODEL_BY_ROLE, publicAccount, signToken } from "../utils/tokens.js";
@@ -16,14 +18,15 @@ const KNOWN_DEFAULT_PASSWORDS = ["admin123", "worker123"];
 
 export const hashPassword = (plain) => bcrypt.hash(plain, BCRYPT_ROUNDS);
 
-const sessionResponse = (account, role) => ({
+const sessionResponse = (account, role, remember = false) => ({
   success: true,
-  token: signToken(account, role),
+  token: signToken(account, role, remember),
+  remember,
   user: publicAccount(account, role),
 });
 
 export const register = async (req, res) => {
-  const { fullName, email, password, phone } = req.body;
+  const { fullName, email, password, phone, remember } = req.body;
 
   if (await User.exists({ email })) {
     throw new AppError(409, "An account with this email already exists. Try signing in.");
@@ -31,7 +34,62 @@ export const register = async (req, res) => {
 
   const user = await User.create({ fullName, email, phone, password: await hashPassword(password) });
 
-  res.status(201).json({ ...sessionResponse(user, "citizen"), message: "Account created" });
+  res.status(201).json({ ...sessionResponse(user, "citizen", remember), message: "Account created" });
+};
+
+// Google sign-in for residents. The browser obtains an ID token from Google
+// Identity Services; we verify its signature, audience and expiry with
+// Google's library, then find or create the citizen account by verified email.
+export const googleSignIn = async (req, res) => {
+  if (!env.googleClientId) {
+    throw new AppError(503, "Google sign-in is not configured on this server");
+  }
+
+  let payload;
+  try {
+    payload = await verifyGoogleToken(req.body.credential);
+  } catch {
+    throw new AppError(401, "Google sign-in failed. Please try again.");
+  }
+
+  if (!payload?.email || payload.email_verified !== true) {
+    throw new AppError(401, "Your Google account email is not verified");
+  }
+
+  const email = payload.email.trim().toLowerCase();
+  let user = await User.findOne({ $or: [{ googleId: payload.sub }, { email }] });
+  let created = false;
+
+  if (!user) {
+    user = await User.create({
+      fullName: (payload.name || email.split("@")[0]).slice(0, 80),
+      email,
+      googleId: payload.sub,
+      authProviders: ["google"],
+      // Random password nobody knows; the user can set a real one in Profile.
+      password: await hashPassword(crypto.randomBytes(32).toString("base64url")),
+      isVerified: true,
+    });
+    created = true;
+  } else {
+    if (!user.isActive) {
+      throw new AppError(403, "This account has been deactivated. Contact support.");
+    }
+    // Google has verified ownership of this email, so it is safe to link.
+    if (!user.googleId) user.googleId = payload.sub;
+    if (!user.authProviders.includes("google")) user.authProviders.push("google");
+    user.isVerified = true;
+    await user.save();
+  }
+
+  res.status(created ? 201 : 200).json({
+    ...sessionResponse(user, "citizen", req.body.remember),
+    message: created ? "Account created with Google" : "Signed in with Google",
+  });
+};
+
+export const authConfig = (req, res) => {
+  res.json({ success: true, googleEnabled: Boolean(env.googleClientId) });
 };
 
 const loginAs = async (role, email, password) => {
@@ -57,9 +115,9 @@ const loginAs = async (role, email, password) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password, role, remember } = req.body;
   const account = await loginAs(role, email, password);
-  res.json({ ...sessionResponse(account, role), message: "Signed in" });
+  res.json({ ...sessionResponse(account, role, remember), message: "Signed in" });
 };
 
 // Kept for clients that still call /api/admin/login and /api/worker/login.
@@ -90,16 +148,23 @@ export const changePassword = async (req, res) => {
   const { role } = req.user;
   const account = await MODEL_BY_ROLE[role].findById(req.user.id).select("+password");
 
-  if (!(await bcrypt.compare(req.body.currentPassword, account.password))) {
+  // Accounts created with Google have no password the user knows yet.
+  const settingFirstPassword = role === "citizen" && !(account.authProviders || ["password"]).includes("password");
+
+  if (!settingFirstPassword && !(await bcrypt.compare(req.body.currentPassword || "", account.password))) {
     throw badRequest("Your current password is incorrect");
   }
 
   account.password = await hashPassword(req.body.newPassword);
   account.tokenVersion = (account.tokenVersion || 0) + 1;
+  if (settingFirstPassword) account.authProviders.push("password");
   await account.save();
 
   // Other sessions are invalidated; this one receives a fresh token.
-  res.json({ ...sessionResponse(account, role), message: "Password changed" });
+  res.json({
+    ...sessionResponse(account, role, req.body.remember),
+    message: settingFirstPassword ? "Password set. You can now also sign in with email and password." : "Password changed",
+  });
 };
 
 // Invalidates every token issued to this account.

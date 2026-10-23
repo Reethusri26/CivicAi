@@ -77,6 +77,7 @@ Step-by-step instructions, environment variables, and the pilot-launch checklist
   Gemini API in this codebase. Without `GEMINI_API_KEY` the rule-based fallback is used and labelled as such.
 - Notifications are in-app only (polled every 60 s). Email/push are not implemented.
 - GridFS keeps photos in the same Atlas cluster; the free tier's 512 MB will fill after a few thousand photos.
-- No email verification or password-reset-by-email yet; admins reset worker passwords, citizens change their own while signed in.
+- No password-reset-by-email yet; admins reset worker passwords, citizens change their own while signed in (or use Google sign-in once configured).
+- Google sign-in is built and tested with a simulated Google verifier; it needs a real OAuth Client ID (see DEPLOYMENT.md) before it appears.
 - The JWT is stored in `localStorage` (see the threat-model note in ARCHITECTURE.md).
 - Privacy notice and terms are pilot drafts and need review by the operating organisation.

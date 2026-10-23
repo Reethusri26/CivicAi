@@ -54,6 +54,28 @@ Root directory `client`, framework Vite. [`client/vercel.json`](../client/vercel
 2. Submit 10–20 real-looking test reports; confirm admin detail shows the **Gemini** badge, not "Rule-based fallback".
 3. Only then consider `GEMINI_ANALYZE_IMAGES=true`, and spot-check results with photos.
 
+## 5. Google sign-in (optional, residents only)
+
+1. Open https://console.cloud.google.com, create (or pick) a project.
+2. **APIs & Services → OAuth consent screen**: choose *External*, fill in app name (CivicAI), support email, and publish.
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID**: type *Web application*.
+   - **Authorized JavaScript origins**: your Vercel URL (e.g. `https://civic-ai-jet.vercel.app`) and `http://localhost:5173` for local testing.
+   - No redirect URIs are needed (the button uses a popup).
+4. Copy the **Client ID** (ends in `.apps.googleusercontent.com`). It is public, not a secret.
+5. Set it in **both** places, then redeploy both:
+   - Render: `GOOGLE_CLIENT_ID`
+   - Vercel: `VITE_GOOGLE_CLIENT_ID`
+
+The "Sign in with Google" button appears only when both are set. Google accounts are matched to residents by
+verified email; an existing resident with the same email is linked rather than duplicated. Workers and admins keep
+email + password sign-in.
+
+## "Keep me signed in"
+
+Ticked (default): a 30-day token kept in the browser's local storage, so closing the browser does not sign you out.
+Unticked: a 1-day token kept only for the browser session. Change the 30-day length with `JWT_REMEMBER_EXPIRES_IN`.
+Signing out, changing the password, or an admin deactivating the account ends all sessions immediately.
+
 ## Smoke test after deploying
 
 1. Register a citizen, submit a complaint with 2 photos → reference shown.

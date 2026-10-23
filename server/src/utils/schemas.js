@@ -34,12 +34,19 @@ export const registerSchema = z.object({
   email,
   password,
   phone,
+  remember: z.boolean().optional().default(false),
 });
 
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, "Enter your password").max(128),
   role: z.enum(["citizen", "worker", "admin"]).optional().default("citizen"),
+  remember: z.boolean().optional().default(false),
+});
+
+export const googleSchema = z.object({
+  credential: z.string().min(20, "Missing Google credential").max(4096),
+  remember: z.boolean().optional().default(false),
 });
 
 export const profileSchema = z.object({
@@ -48,8 +55,10 @@ export const profileSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Enter your current password"),
+  // Optional only for Google accounts setting their first password; checked in the controller.
+  currentPassword: z.string().max(128).optional().default(""),
   newPassword: password,
+  remember: z.boolean().optional().default(false),
 });
 
 export const createComplaintSchema = z

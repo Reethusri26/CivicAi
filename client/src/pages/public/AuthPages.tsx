@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Field";
 import { Logo } from "../../components/ui/Logo";
 import { Hero3D } from "../../components/three/Hero3D";
+import { GoogleSignInButton } from "../../components/auth/GoogleSignInButton";
 import { PHOTOS } from "../../lib/photos";
 import { InlineAlert } from "../../components/ui/States";
 import { errorMessage } from "../../lib/api";
@@ -51,6 +52,23 @@ function AuthFrame({ title, subtitle, children }: { title: string; subtitle: str
   );
 }
 
+function KeepSignedIn({ checked, onChange }: { checked: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+      <input
+        type="checkbox"
+        className="mt-0.5 size-4 rounded border-slate-300 accent-brand-600"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="text-sm">
+        <span className="font-semibold text-slate-800">Keep me signed in</span>
+        <span className="block text-xs text-slate-500">Stay signed in for 30 days on this device. Untick on shared or public computers.</span>
+      </span>
+    </label>
+  );
+}
+
 const ROLES: { value: Role; label: string; icon: typeof UserRound }[] = [
   { value: "citizen", label: "Resident", icon: UserRound },
   { value: "worker", label: "Field worker", icon: HardHat },
@@ -66,10 +84,11 @@ export function LoginPage() {
 }
 
 function LoginForm({ initialRole }: { initialRole: Role }) {
-  const { user, signIn } = useAuth();
+  const { user, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [role, setRole] = useState<Role>(initialRole);
+  const [remember, setRemember] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -84,10 +103,22 @@ function LoginForm({ initialRole }: { initialRole: Role }) {
     setError("");
     setLoading(true);
     try {
-      const account = await signIn(email, password, role);
+      const account = await signIn(email, password, role, remember);
       navigate(from && from.startsWith(`/${account.role}`) ? from : HOME_BY_ROLE[account.role], { replace: true });
     } catch (err) {
       setError(errorMessage(err, "Sign in failed"));
+      setLoading(false);
+    }
+  };
+
+  const google = async (credential: string) => {
+    setError("");
+    setLoading(true);
+    try {
+      await signInWithGoogle(credential, remember);
+      navigate(from && from.startsWith("/citizen") ? from : "/citizen", { replace: true });
+    } catch (err) {
+      setError(errorMessage(err, "Google sign-in failed"));
       setLoading(false);
     }
   };
@@ -125,10 +156,13 @@ function LoginForm({ initialRole }: { initialRole: Role }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <KeepSignedIn checked={remember} onChange={setRemember} />
         <Button type="submit" className="w-full" size="lg" loading={loading} disabled={!email || !password}>
           Sign in
         </Button>
       </form>
+
+      {role === "citizen" && <GoogleSignInButton onCredential={google} text="signin_with" />}
 
       {role === "citizen" ? (
         <p className="mt-6 text-center text-sm text-slate-600">
@@ -153,9 +187,10 @@ const passwordProblem = (value: string) => {
 };
 
 export function RegisterPage() {
-  const { user, register } = useAuth();
+  const { user, register, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ fullName: "", email: "", phone: "", password: "" });
+  const [remember, setRemember] = useState(true);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -180,10 +215,22 @@ export function RegisterPage() {
     setError("");
     setLoading(true);
     try {
-      await register(form);
+      await register(form, remember);
       navigate("/citizen", { replace: true });
     } catch (err) {
       setError(errorMessage(err, "Registration failed"));
+      setLoading(false);
+    }
+  };
+
+  const google = async (credential: string) => {
+    setError("");
+    setLoading(true);
+    try {
+      await signInWithGoogle(credential, remember);
+      navigate("/citizen", { replace: true });
+    } catch (err) {
+      setError(errorMessage(err, "Google sign-up failed"));
       setLoading(false);
     }
   };
@@ -207,6 +254,7 @@ export function RegisterPage() {
           error={touched.password ? errors.password : ""}
           hint="At least 8 characters with a letter and a number"
         />
+        <KeepSignedIn checked={remember} onChange={setRemember} />
         <Button type="submit" size="lg" className="w-full" loading={loading}>
           Create account
         </Button>
@@ -216,6 +264,7 @@ export function RegisterPage() {
           <Link to="/privacy" className="underline">privacy notice</Link>.
         </p>
       </form>
+      <GoogleSignInButton onCredential={google} text="signup_with" />
       <p className="mt-6 text-center text-sm text-slate-600">
         Already registered?{" "}
         <Link to="/login" className="font-semibold text-brand-700 hover:underline">Sign in</Link>

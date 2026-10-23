@@ -9,7 +9,7 @@ import { Input } from "../../components/ui/Field";
 import { EmptyState, ErrorState, ListSkeleton } from "../../components/ui/States";
 import { useToast } from "../../components/ui/Toast";
 import { useAuth } from "../../context/AuthContext";
-import { api, errorMessage } from "../../lib/api";
+import { api, errorMessage, isRemembered } from "../../lib/api";
 import { cx } from "../../lib/cx";
 import { formatDateTime, timeAgo } from "../../lib/format";
 import type { AppNotification } from "../../lib/types";
@@ -77,6 +77,8 @@ export function ProfilePage() {
 
   if (!user) return null;
 
+  const settingFirst = user.hasPassword === false;
+
   const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
     setSaving(true);
@@ -101,12 +103,13 @@ export function ProfilePage() {
     setChanging(true);
     try {
       const res = await api.post("/auth/change-password", {
-        currentPassword: passwords.currentPassword,
+        currentPassword: settingFirst ? undefined : passwords.currentPassword,
         newPassword: passwords.newPassword,
+        remember: isRemembered(),
       });
       setSession(res.data.token, res.data.user);
       setPasswords({ currentPassword: "", newPassword: "", confirm: "" });
-      toast.success("Password changed. Other devices have been signed out.");
+      toast.success(settingFirst ? "Password set. You can now sign in with email too." : "Password changed. Other devices have been signed out.");
     } catch (err) {
       setPwError(errorMessage(err));
     } finally {
@@ -128,15 +131,24 @@ export function ProfilePage() {
         </form>
       </Card>
       <Card>
-        <CardHeader title="Change password" description="Changing your password signs you out on other devices." />
+        <CardHeader
+          title={settingFirst ? "Set a password" : "Change password"}
+          description={
+            settingFirst
+              ? "You signed up with Google. Add a password if you also want to sign in with your email."
+              : "Changing your password signs you out on other devices."
+          }
+        />
         <form onSubmit={changePassword} className="space-y-4 p-5">
           {/* Lets password managers update the saved login for this account. */}
           <input type="email" name="username" autoComplete="username" value={user.email} readOnly hidden />
-          <Input label="Current password" type="password" autoComplete="current-password" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} required />
+          {!settingFirst && (
+            <Input label="Current password" type="password" autoComplete="current-password" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} required />
+          )}
           <Input label="New password" type="password" autoComplete="new-password" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} hint="At least 8 characters with a letter and a number" required />
           <Input label="Confirm new password" type="password" autoComplete="new-password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} required error={pwError} />
-          <Button type="submit" variant="secondary" loading={changing} disabled={!passwords.currentPassword || !passwords.newPassword}>
-            Update password
+          <Button type="submit" variant="secondary" loading={changing} disabled={(!settingFirst && !passwords.currentPassword) || !passwords.newPassword}>
+            {settingFirst ? "Set password" : "Update password"}
           </Button>
         </form>
       </Card>
