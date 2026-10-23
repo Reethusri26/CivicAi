@@ -130,6 +130,8 @@ export function ProfilePage() {
       <Card>
         <CardHeader title="Change password" description="Changing your password signs you out on other devices." />
         <form onSubmit={changePassword} className="space-y-4 p-5">
+          {/* Lets password managers update the saved login for this account. */}
+          <input type="email" name="username" autoComplete="username" value={user.email} readOnly hidden />
           <Input label="Current password" type="password" autoComplete="current-password" value={passwords.currentPassword} onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })} required />
           <Input label="New password" type="password" autoComplete="new-password" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} hint="At least 8 characters with a letter and a number" required />
           <Input label="Confirm new password" type="password" autoComplete="new-password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} required error={pwError} />

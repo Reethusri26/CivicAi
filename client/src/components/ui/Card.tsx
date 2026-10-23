@@ -35,9 +35,10 @@ export function PageHeader({ title, description, actions, eyebrow }: PageHeaderP
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
-        {eyebrow && <div className="mb-1 text-sm font-medium text-brand-700">{eyebrow}</div>}
-        <h1 className="text-2xl font-bold sm:text-[1.75rem]">{title}</h1>
-        {description && <p className="mt-1 max-w-2xl text-sm text-slate-600 sm:text-base">{description}</p>}
+        {eyebrow && <div className="mb-1 text-sm font-semibold text-[var(--role-ink)]">{eyebrow}</div>}
+        <h1 className="font-hero text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
+        <div className="mt-2 h-1 w-14 rounded-full bg-role" aria-hidden />
+        {description && <p className="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>

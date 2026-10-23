@@ -183,12 +183,12 @@ function Street() {
     <group ref={group}>
       {/* Asphalt and pavements */}
       <mesh position={[0, -0.05, 0]}>
-        <boxGeometry args={[ROAD_LENGTH, 0.1, 3.4]} />
+        <boxGeometry args={[ROAD_LENGTH * 3, 0.1, 3.4]} />
         <meshStandardMaterial color="#14122e" roughness={0.95} />
       </mesh>
       {[-1, 1].map((side) => (
         <mesh key={side} position={[0, 0.02, side * 2.6]}>
-          <boxGeometry args={[ROAD_LENGTH, 0.14, 1.8]} />
+          <boxGeometry args={[ROAD_LENGTH * 3, 0.14, 1.8]} />
           <meshStandardMaterial color="#2a2660" roughness={0.9} />
         </mesh>
       ))}

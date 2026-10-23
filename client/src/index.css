@@ -3,6 +3,8 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Wide, characterful face for big titles and numbers only */
+  --font-hero: "Unbounded", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 
   /* Electric indigo: primary actions, links, focus */
   --color-brand-50: #f0f0ff;
@@ -63,6 +65,42 @@
   ::selection {
     background: var(--color-brand-100);
   }
+}
+
+/* Per-portal accent colours, set by AppShell via data-role */
+:root,
+[data-role="citizen"] {
+  --role-a: #6552ff;
+  --role-b: #d946ef;
+  --role-soft: #f0f0ff;
+  --role-ink: #4728d8;
+}
+[data-role="worker"] {
+  --role-a: #f59e0b;
+  --role-b: #ea580c;
+  --role-soft: #fff7ed;
+  --role-ink: #c2410c;
+}
+[data-role="admin"] {
+  --role-a: #14d1a0;
+  --role-b: #0ea5e9;
+  --role-soft: #ecfeff;
+  --role-ink: #0e7490;
+}
+
+@utility bg-role {
+  background-image: linear-gradient(135deg, var(--role-a), var(--role-b));
+}
+
+@utility text-role {
+  background-image: linear-gradient(100deg, var(--role-a), var(--role-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shadow-role {
+  box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--role-a) 70%, transparent);
 }
 
 @utility text-gradient {

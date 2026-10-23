@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useId, useState } from "react";
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { cx } from "../../lib/cx";
 
@@ -45,19 +46,44 @@ function FieldWrapper({ id, label, hint, error, required, children, className }:
 
 type Common = { label?: ReactNode; hint?: ReactNode; error?: string; wrapperClassName?: string };
 
-export function Input({ label, hint, error, wrapperClassName, className, id, required, ...rest }: InputHTMLAttributes<HTMLInputElement> & Common) {
+export function Input({ label, hint, error, wrapperClassName, className, id, required, type, ...rest }: InputHTMLAttributes<HTMLInputElement> & Common) {
   const autoId = useId();
   const fieldId = id || autoId;
+  const isPassword = type === "password";
+  const [visible, setVisible] = useState(false);
+
+  const input = (
+    <input
+      id={fieldId}
+      type={isPassword && visible ? "text" : type}
+      required={required}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
+      className={cx(control, ringFor(error), isPassword && "pr-11", className)}
+      {...rest}
+    />
+  );
+
   return (
     <FieldWrapper id={fieldId} label={label} hint={hint} error={error} required={required} className={wrapperClassName}>
-      <input
-        id={fieldId}
-        required={required}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
-        className={cx(control, ringFor(error), className)}
-        {...rest}
-      />
+      {isPassword ? (
+        <div className="relative">
+          {input}
+          <button
+            type="button"
+            onClick={() => setVisible((value) => !value)}
+            className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-lg text-slate-500 hover:text-brand-700 focus-visible:outline-offset-[-2px]"
+            aria-label={visible ? "Hide password" : "Show password"}
+            aria-pressed={visible}
+            aria-controls={fieldId}
+            disabled={rest.disabled}
+          >
+            {visible ? <EyeOff className="size-5" aria-hidden /> : <Eye className="size-5" aria-hidden />}
+          </button>
+        </div>
+      ) : (
+        input
+      )}
     </FieldWrapper>
   );
 }
