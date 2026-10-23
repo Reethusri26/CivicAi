@@ -38,8 +38,9 @@ export default function AppRoutes() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/track" element={<TrackPage />} />
               <Route element={<PublicLayout />}>
-                <Route path="/track" element={<TrackPage />} />
+
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="*" element={<NotFoundPage />} />

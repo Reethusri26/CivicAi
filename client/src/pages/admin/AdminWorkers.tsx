@@ -155,7 +155,7 @@ export default function AdminWorkers() {
                       <p className="text-xs text-slate-500">{w.email}</p>
                     </td>
                     <td className="px-4 py-3">{w.department}</td>
-                    <td className="px-4 py-3">{w.phone || "—"}</td>
+                    <td className="whitespace-nowrap px-4 py-3">{w.phone || "—"}</td>
                     <td className="px-4 py-3 text-right tabular-nums">
                       <Link to={`/admin/complaints?worker=${w.id}`} className="font-semibold text-brand-700 hover:underline">{w.activeTasks}</Link>
                     </td>

@@ -74,7 +74,7 @@ export default function AdminAnalytics() {
               data={{
                 labels: a.trend.map((t) => monthLabel(t.month)),
                 datasets: [
-                  { label: "Created", data: a.trend.map((t) => t.created), borderColor: "#2647e0", backgroundColor: "rgba(38,71,224,0.08)", fill: true, tension: 0.3 },
+                  { label: "Created", data: a.trend.map((t) => t.created), borderColor: "#5536f5", backgroundColor: "rgba(85,54,245,0.10)", fill: true, tension: 0.3 },
                   { label: "Completed", data: a.trend.map((t) => t.completed), borderColor: "#10b981", backgroundColor: "transparent", tension: 0.3 },
                 ],
               }}
@@ -90,7 +90,7 @@ export default function AdminAnalytics() {
             <Bar
               data={{
                 labels: a.byCategory.map((r) => r.key),
-                datasets: [{ label: "Complaints", data: a.byCategory.map((r) => r.count), backgroundColor: "#2647e0", borderRadius: 6, maxBarThickness: 36 }],
+                datasets: [{ label: "Complaints", data: a.byCategory.map((r) => r.count), backgroundColor: "#5536f5", borderRadius: 6, maxBarThickness: 36 }],
               }}
               options={{ indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: integerAxis, y: { grid: { display: false } } } }}
               aria-label="Bar chart of complaints by category"

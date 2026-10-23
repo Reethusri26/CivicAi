@@ -50,7 +50,7 @@ export const STATUS_CHART_COLORS: Record<Status, string> = {
   Pending: "#f59e0b",
   Reviewed: "#0ea5e9",
   Assigned: "#8b5cf6",
-  "In Progress": "#3b64f3",
+  "In Progress": "#6552ff",
   Completed: "#10b981",
 };
 

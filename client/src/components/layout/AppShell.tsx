@@ -75,7 +75,7 @@ function SidebarNav({ role, onNavigate }: { role: Role; onNavigate?: () => void 
           className={({ isActive }) =>
             cx(
               "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
-              isActive ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
+              isActive ? "bg-brand-600 text-white shadow-[0_6px_20px_-6px_rgb(101_82_255/0.8)]" : "text-slate-300 hover:bg-white/5 hover:text-white"
             )
           }
         >
