@@ -13,9 +13,18 @@ const arg = (name) => {
   return index > -1 ? process.argv[index + 1] : undefined;
 };
 
-const ask = (question) =>
+// `hidden` prints "*" instead of the typed characters, so passwords never
+// appear on screen or in copied terminal output.
+const ask = (question, { hidden = false } = {}) =>
   new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    if (hidden) {
+      rl._writeToOutput = (text) => {
+        if (text.startsWith(question)) process.stdout.write(question + "*".repeat(rl.line.length));
+        else if (text.includes("\n")) process.stdout.write("\n");
+        else process.stdout.write("*".repeat(text.length));
+      };
+    }
     rl.question(question, (answer) => {
       rl.close();
       resolve(answer);
@@ -26,7 +35,13 @@ const main = async () => {
   assertRequiredEnv();
   const email = (arg("email") || (await ask("Admin email: "))).trim().toLowerCase();
   const name = arg("name") || "Administrator";
-  const password = process.env.ADMIN_PASSWORD || (await ask("New password (min 12 chars): "));
+  let password = process.env.ADMIN_PASSWORD;
+
+  if (!password) {
+    password = await ask("New password (min 12 chars, hidden): ", { hidden: true });
+    const confirm = await ask("Type it again to confirm: ", { hidden: true });
+    if (password !== confirm) throw new Error("The passwords did not match. Nothing was changed.");
+  }
 
   if (password.length < 12) throw new Error("Password must be at least 12 characters");
 
